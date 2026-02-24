@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BioNexas — Protein Networks & Inflammation</title>
+  <meta name="description" content="BioNexas: network biology + proteomics visualizations for inflammation research." />
+
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- Plotly (charts) -->
+  <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+
+  <!-- vis-network (interactive network graph) -->
+  <script src="https://unpkg.com/vis-network@9.1.9/standalone/umd/vis-network.min.js"></script>
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">BN</div>
+      <div class="brand-text">
+        <div class="name">BioNexas</div>
+        <div class="tag">Protein Interaction Networks • Proteomics • Inflammation</div>
+      </div>
+    </div>
+
+    <nav class="nav" aria-label="Primary"><a href="#focus">Research focus</a>
+      <a href="#visuals">Visualizations</a>
+      <a href="#platform">Platform</a>
+      <a href="#contact">Contact</a>
+      <a href="network.html">Network</a>
+    </nav>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-left">
+        <h1>Make inflammation data easier to see, explain, and act on.</h1>
+        <p class="sub">
+          We turn proteomics and protein-interaction evidence into clean, interactive visuals:
+          who connects to whom, what changes under inflammation, and where the strongest signals live.
+        </p>
+
+        <div class="hero-cta">
+          <a class="btn ghost" href="network.html">Open Network app</a>
+          <a class="btn primary" href="#visuals">Explore the demos</a>
+          <a class="btn ghost" href="#contact">Partner with us</a>
+        </div>
+
+        <div class="hero-mini">
+          <div class="mini">
+            <div class="mini-title">What we build</div>
+            <div class="mini-text">Network maps, differential plots, and pathway-style summaries you can share in talks and proposals.</div>
+          </div>
+          <div class="mini">
+            <div class="mini-title">Why it matters</div>
+            <div class="mini-text">Inflammation is complex. Better visuals help teams align faster and spot patterns sooner.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-right">
+        <div class="hero-card">
+          <div class="hero-card-title">Quick preview</div>
+          <div class="hero-card-sub">A small example network (interactive)</div>
+          <div id="heroNetwork" class="network small" role="img" aria-label="Interactive protein network preview"></div>
+
+          <div class="hero-stats">
+            <div class="stat">
+              <div class="stat-num" id="statNodes">—</div>
+              <div class="stat-label">proteins</div>
+            </div>
+            <div class="stat">
+              <div class="stat-num" id="statEdges">—</div>
+              <div class="stat-label">interactions</div>
+            </div>
+            <div class="stat">
+              <div class="stat-num">Live</div>
+              <div class="stat-label">hover + drag</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOCUS -->
+    <section id="focus" class="section">
+      <div class="section-head">
+        <h2>Research focus</h2>
+        <p class="muted">
+          This page is written to match how teams actually describe the work:
+          inflammation-first, protein evidence-heavy, and built for clarity.
+        </p>
+      </div>
+
+      <div class="grid three">
+        <article class="card">
+          <h3>Immune proteins & inflammation</h3>
+          <p>
+            We organize protein-level evidence around inflammatory responses—highlighting which proteins shift,
+            which relationships tighten or break, and how that story evolves across conditions.
+          </p>
+          <ul class="bullets">
+            <li>Protein changes (abundance / significance)</li>
+            <li>Interaction-centric summaries (PPI/graphs)</li>
+            <li>Clear figures for proposals and progress reports</li>
+          </ul>
+        </article>
+
+        <article class="card">
+          <h3>Proteomics-friendly outputs</h3>
+          <p>
+            Proteomics generates a lot of detail fast. Our visuals are designed to keep the signal visible:
+            volcano plots, heatmaps, ranked lists, and pathways-style panels.
+          </p>
+          <ul class="bullets">
+            <li>Volcano + MA-style views</li>
+            <li>Heatmaps with clean labeling</li>
+            <li>Exportable PNG/SVG-ready layouts</li>
+          </ul>
+        </article>
+
+        <article class="card">
+          <h3>Network biology that people can use</h3>
+          <p>
+            Network graphs are powerful, but only if they’re readable. We focus on interactivity
+            (hover, filter, highlight) so collaborators can explore without a steep learning curve.
+          </p>
+          <ul class="bullets">
+            <li>Filter by pathway / score / category</li>
+            <li>Show neighborhoods around a target protein</li>
+            <li>Explainability: “why is this node important?”</li>
+          </ul>
+        </article>
+      </div>
+
+      <div class="note">
+        <strong>Note:</strong> This is a starter site. The demos use small synthetic data so the page is fast.
+        You can swap in real datasets later (CSV/JSON) without changing the layout.
+      </div>
+    </section>
+
+    <!-- VISUALIZATIONS -->
+    <section id="visuals" class="section alt">
+      <div class="section-head">
+        <h2>Visualizations you can do on this website</h2>
+        <p class="muted">
+          These are the kinds of figures people ask for in inflammation / proteomics projects.
+          Use the switches to see how the story changes.
+        </p>
+      </div>
+
+      <div class="viz-grid">
+        <!-- Network -->
+        <div class="card viz">
+          <div class="viz-head">
+            <h3>Protein interaction network</h3>
+            <p class="muted small">Drag nodes, hover for details, click to focus.</p>
+          </div>
+
+          <div class="controls">
+            <label class="control">
+              <span>Condition</span>
+              <select id="conditionSelect">
+                <option value="baseline">Baseline</option>
+                <option value="inflammation" selected>Inflammation</option>
+              </select>
+            </label>
+
+            <label class="control">
+              <span>Min edge score</span>
+              <input id="edgeSlider" type="range" min="0" max="100" value="35" />
+              <span class="pill" id="edgeSliderValue">0.35</span>
+            </label>
+
+            <button class="btn small" id="resetNetworkBtn" type="button">Reset view</button>
+          </div>
+
+          <div id="ppiNetwork" class="network" role="img" aria-label="Interactive protein-protein interaction network"></div>
+
+          <div class="foot muted small">
+            Tip: Click a node to highlight its neighbors. Use the slider to simplify the network.
+          </div>
+        </div>
+
+        <!-- Volcano -->
+        <div class="card viz">
+          <div class="viz-head">
+            <h3>Volcano plot (differential proteomics)</h3>
+            <p class="muted small">Interactive hover + thresholds.</p>
+          </div>
+
+          <div class="controls">
+            <label class="control">
+              <span>Fold-change cutoff</span>
+              <input id="fcSlider" type="range" min="0" max="300" value="100" />
+              <span class="pill" id="fcValue">1.0×</span>
+            </label>
+
+            <label class="control">
+              <span>p-value cutoff</span>
+              <input id="pSlider" type="range" min="0" max="300" value="130" />
+              <span class="pill" id="pValue">0.05</span>
+            </label>
+
+            <button class="btn small" id="regenVolcanoBtn" type="button">Regenerate points</button>
+          </div>
+
+          <div id="volcanoPlot" class="plot" role="img" aria-label="Volcano plot"></div>
+
+          <div class="foot muted small">
+            This demo uses synthetic points. Swap the generator for your CSV later.
+          </div>
+        </div>
+
+        <!-- Heatmap -->
+        <div class="card viz">
+          <div class="viz-head">
+            <h3>Heatmap (protein x sample)</h3>
+            <p class="muted small">A quick way to show clusters and condition separation.</p>
+          </div>
+
+          <div class="controls">
+            <label class="control">
+              <span>Scale</span>
+              <select id="heatmapScale">
+                <option value="z" selected>Z-score (by protein)</option>
+                <option value="raw">Raw</option>
+              </select>
+            </label>
+
+            <button class="btn small" id="regenHeatmapBtn" type="button">Regenerate</button>
+          </div>
+
+          <div id="heatmap" class="plot" role="img" aria-label="Heatmap"></div>
+
+          <div class="foot muted small">
+            Add real sample labels (timepoint, treatment, replicate) when you plug in datasets.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PLATFORM -->
+    <section id="platform" class="section">
+      <div class="section-head">
+        <h2>Platform roadmap (what we can add next)</h2>
+        <p class="muted">
+          Start simple, then grow into a real research portal as you connect datasets, papers, and projects.
+        </p>
+      </div>
+
+      <div class="grid two">
+        <div class="card">
+          <h3>Short-term add-ons</h3>
+          <ul class="bullets">
+            <li>Upload a CSV → render volcano + heatmap automatically</li>
+            <li>“Target protein” search box → show neighborhood and top partners</li>
+            <li>Download figures (PNG/SVG) and tables (CSV)</li>
+            <li>Project pages for grants (aims, figures, milestones)</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>Long-term direction</h3>
+          <ul class="bullets">
+            <li>Interactive dashboards per study (conditions, tissues, cohorts)</li>
+            <li>Pathway overlays + literature-linked evidence</li>
+            <li>Versioned datasets and reproducible figure generation</li>
+            <li>Private access for collaborators (if you move off GitHub Pages)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="cta-band">
+        <div>
+          <div class="cta-title">Want this site to feel “grant-ready”?</div>
+          <div class="cta-text muted">
+            We can tune the wording to match specific funding language and add a one-page “Project Summary” section.
+          </div>
+        </div>
+        <a class="btn primary" href="#contact">Get in touch</a>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="section alt">
+      <div class="section-head">
+        <h2>Contact</h2>
+        <p class="muted">Replace the placeholder email once you’re ready.</p>
+      </div>
+
+      <div class="grid two">
+        <div class="card">
+          <h3>BioNexas</h3>
+          <p class="muted">
+            A lightweight home for protein-network and proteomics visualizations supporting inflammation research.
+          </p>
+
+          <div class="contact-list">
+            <div class="contact-row">
+              <span class="contact-label">Email</span>
+              <a href="mailto:hello@bionexas.com">hello@bionexas.com</a>
+            </div>
+            <div class="contact-row">
+              <span class="contact-label">GitHub</span>
+              <a href="https://github.com/alauddinsabari/bionexas" onclick="return false;">Official Repository with Python+R Code</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>What to send us</h3>
+          <ul class="bullets">
+            <li>A sample table (CSV) of proteins with fold-change + p-values</li>
+            <li>If available: a PPI edge list (proteinA, proteinB, score)</li>
+            <li>Any “must-include” proteins/pathways from current aims</li>
+          </ul>
+          <p class="muted small">
+            We can keep everything synthetic for public pages and reserve real data for private deployments.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div>© <span id="year"></span> BioNexas</div>
+      <div class="muted small">- Alauddin Sabari</div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

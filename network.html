@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BioNexas Network</title>
+  <meta name="description" content="BioNexas Network — interactive protein network visualizations." />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .wrap { max-width: 1180px; margin: 0 auto; padding: 1.25rem; }
+    .page-hero { padding: 1.2rem 0 1.2rem; }
+    .page-hero h1 { margin: .2rem 0 .55rem; font-size: clamp(1.8rem, 3.6vw, 2.6rem); line-height: 1.1; }
+    .sub { color: rgba(255,255,255,.65); max-width: 80ch; }
+
+    .embed-card{
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      padding: 1rem;
+      box-shadow: 0 6px 18px rgba(0,0,0,.22);
+    }
+    .embed-head{
+      display:flex;
+      flex-wrap:wrap;
+      gap:.75rem;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:.75rem;
+    }
+    .embed-actions{ display:flex; gap:.6rem; flex-wrap:wrap; }
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      padding:.6rem .85rem; border-radius: 12px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      color: #e8ecff; font-weight: 750;
+      text-decoration:none;
+    }
+    .btn:hover{ background: rgba(255,255,255,.08); }
+    .hint{ color: rgba(255,255,255,.65); font-size:.95rem; margin:.25rem 0 0; }
+    .iframe-wrap{
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      overflow:hidden;
+    }
+    iframe{
+      width:100%;
+      height: 920px;
+      border:0;
+      display:block;
+      background: transparent;
+    }
+    .note{
+      margin-top: .85rem;
+      color: rgba(255,255,255,.65);
+      font-size:.95rem;
+    }
+    code{
+      background: rgba(0,0,0,.18);
+      border: 1px solid rgba(255,255,255,.10);
+      padding: .1rem .35rem;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">BN</div>
+      <div class="brand-text">
+        <div class="name">BioNexas</div>
+        <div class="tag">Network</div>
+      </div>
+    </div>
+
+    <nav class="nav" aria-label="Primary">
+      <a href="./index.html">Home</a>
+      <a href="index.html#visuals">Visuals</a>
+      <a href="network.html">Network</a>
+      <a href="index.html#contact">Contact</a>
+    </nav>
+  </header>
+
+  <main class="wrap">
+    <section class="page-hero">
+      <h1>Network Explorer</h1>
+      <p class="sub">
+        This page embeds the BioNexas Streamlit Network app.
+      </p>
+    </section>
+
+    <section class="embed-card">
+      <div class="embed-head">
+        <div>
+          <div style="font-weight:900;">Our App</div>
+          <div class="hint"> you can open our app in a new tab</div>
+        </div>
+
+        <div class="embed-actions">
+          <a class="btn" id="openNewTab" href="#" target="_blank" rel="noopener">Open in new tab</a>
+          <a class="btn" href="index.html">Back to Home</a>
+        </div>
+      </div>
+
+      <!-- ✅ Replace this with your Streamlit deployment URL -->
+      <!-- Examples:
+           https://YOUR-APP.streamlit.app
+           https://share.streamlit.io/USER/REPO/main/app.py
+      -->
+      <div class="iframe-wrap">
+        <iframe
+          id="appFrame"
+          src="https://YOUR-STREAMLIT-APP-URL"
+          title="BioNexas Streamlit Network App"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          allow="clipboard-read; clipboard-write"
+        ></iframe>
+      </div>
+
+      <div class="note">
+        Tip: If the embed is blocked by Streamlit headers, keep this page and use the <code>Open in new tab</code> button.
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div>© <span id="year"></span> BioNexas</div>
+      <div class="muted small">Network</div>
+    </div>
+  </footer>
+
+  <script>
+    // Keep footer year updated
+    document.getElementById("year").textContent = String(new Date().getFullYear());
+
+    // Keep "Open in new tab" synced with iframe src
+    const frame = document.getElementById("appFrame");
+    const open = document.getElementById("openNewTab");
+    function sync() {
+      open.href = frame.getAttribute("src") || "#";
+    }
+    sync();
+  </script>
+</body>
+</html>
